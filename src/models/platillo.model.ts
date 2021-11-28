@@ -1,11 +1,28 @@
-import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
-import {Tipo} from './tipo.model';
-import {Categoria} from './categoria.model';
+import {belongsTo, Entity, hasMany, model, property} from '@loopback/repository';
 import {CategoriaPlatillo} from './categoria-platillo.model';
+import {Categoria} from './categoria.model';
 import {FotoPlatillo} from './foto-platillo.model';
 import {Tienda} from './tienda.model';
+import {Tipo} from './tipo.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_platillo_id_tienda: {
+        name: 'fk_platillo_id_tienda',
+        entity: 'Tienda',
+        entityKey: 'id',
+        foreignKey: 'id_tienda',
+      },
+      fk_platillo_id_tipo: {
+        name: 'fk_platillo_id_tipo',
+        entity: 'Tipo',
+        entityKey: 'id',
+        foreignKey: 'id_tipo',
+      }
+    }
+  }
+})
 export class Platillo extends Entity {
   @property({
     type: 'number',
@@ -38,13 +55,20 @@ export class Platillo extends Entity {
   })
   estado?: number;
 
-  @belongsTo(() => Tipo, {name: 'tipo'})
-  id_platillo: number;
-
   @property({
+    type: 'string',
+    required: true,
+  })
+  foto_principal: string;
+
+
+  /*@property({
     type: 'number',
   })
-  id_tipo?: number;
+  id_tipo?: number;*/
+
+  @belongsTo(() => Tipo, {name: 'tipo'})
+  id_tipo: number;
 
   @hasMany(() => Categoria, {through: {model: () => CategoriaPlatillo, keyFrom: 'id_platillo', keyTo: 'id_categoria'}})
   categorias: Categoria[];
